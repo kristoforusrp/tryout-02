@@ -1,0 +1,9 @@
+{
+  "name": "express",
+  "version": "1.0.0",
+  "description": "basic express server",
+  "main": "index.js",
+  "repository": "git@github.com:kristoforusrp/tryout-02.git",
+  "author": "kristoforusrp <kristoforusrp@gmail.com>",
+  "license": "MIT"
+}
