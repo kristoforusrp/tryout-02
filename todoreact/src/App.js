@@ -1,6 +1,5 @@
 import React from 'react';
 import Axios from 'axios';
-import uuid from 'uuid/v4';
 import './App.css';
 
 class TodoApp extends React.Component {
@@ -8,7 +7,7 @@ class TodoApp extends React.Component {
     super(props);
     this.state = {
       items: [],
-      todo: ''
+      title: ''
     };
 
     this.onChangeText = this.onChangeText.bind(this);
@@ -18,19 +17,28 @@ class TodoApp extends React.Component {
 
 
     onChangeText(e) {
-      this.setState({todo: e.target.value});
+      this.setState({title: e.target.value});
     }
 
     handleSubmit(e) {
       e.preventDefault();
-      var newItem = {
-        todo: this.state.todo,
-        id: uuid()
-      };
-      this.setState((prevState) => ({
-        items: prevState.items.concat(newItem),
-        todo: ''
-      }));
+      Axios({
+        method: 'post',
+        url: 'http://localhost:3001/',
+        headers: {
+          'Content-Type': 'application/graphql'
+        },
+        params: {
+          query: `mutation{ add (title: "${this.state.title}") { id, title } }`
+        }
+      })
+      .then((response) => {
+        this.setState((prevState) => ({
+          items: prevState.items.concat(response.data.data.add),
+          title: ''
+        }));
+      })
+      .catch(err => console.log(err))
     }
 
   handleDelete(idx) {
@@ -42,12 +50,12 @@ class TodoApp extends React.Component {
   componentDidMount() {
     Axios({
       method: 'get',
-      url: 'http://localhost:3001/graphql',
+      url: 'http://localhost:3001/',
       headers: {
         'Content-Type': 'application/json'
       },
       params: {
-        query: "{todos { id todo }}"
+        query: `{todos { id, title }}`
       }
     })
     .then((response) => {
@@ -64,11 +72,10 @@ class TodoApp extends React.Component {
       <div className="wrapper">
         <h3 className="title">Todo App</h3>
         <form onSubmit={this.handleSubmit}>
-          <input onChange={this.onChangeText} value={this.state.todo}/>
+          <input onChange={this.onChangeText} value={this.state.title}/>
           <button>{'Add #' + (this.state.items.length + 1)}</button>
         </form>
 
-        {console.log(this.state.items)}
         <TodoList onClick={this.handleDelete}  items={this.state.items} />
 
 
@@ -83,7 +90,7 @@ class TodoList extends React.Component {
       <ul className="ultodo">
         {this.props.items.map((item, idx) =>
           <li key={item.id} className="list-item">
-            {item.todo}
+            {item.title}
             <button onClick={() => this.props.onClick(idx)} className="list-span"> -</button>
           </li>
         )}
