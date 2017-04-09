@@ -1,6 +1,7 @@
 import React from 'react';
 import Axios from 'axios';
 import uuid from 'uuid/v4';
+import './App.css';
 
 class TodoApp extends React.Component {
   constructor(props) {
@@ -12,6 +13,7 @@ class TodoApp extends React.Component {
 
     this.onChangeText = this.onChangeText.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleDelete = this.handleDelete.bind(this);
   }
 
 
@@ -31,6 +33,12 @@ class TodoApp extends React.Component {
       }));
     }
 
+  handleDelete(idx) {
+    this.setState((prevState) => {
+      items: prevState.items.splice(idx, 1)
+    })
+  }
+
   componentDidMount() {
     Axios({
       method: 'get',
@@ -44,7 +52,6 @@ class TodoApp extends React.Component {
     })
     .then((response) => {
       const data = Array.from(response.data.data.todos)
-      console.log(data)
       this.setState((prevState) => ({
         items: prevState.items.concat(data)
       }))
@@ -54,15 +61,15 @@ class TodoApp extends React.Component {
 
   render() {
     return (
-      <div>
-        <h3>Todo App</h3>
+      <div className="wrapper">
+        <h3 className="title">Todo App</h3>
         <form onSubmit={this.handleSubmit}>
           <input onChange={this.onChangeText} value={this.state.todo}/>
           <button>{'Add #' + (this.state.items.length + 1)}</button>
         </form>
 
         {console.log(this.state.items)}
-        <TodoList items={this.state.items} />
+        <TodoList onClick={this.handleDelete}  items={this.state.items} />
 
 
       </div>
@@ -73,9 +80,12 @@ class TodoApp extends React.Component {
 class TodoList extends React.Component {
   render() {
     return (
-      <ul>
-        {this.props.items.map(item =>
-          <li key={item.id}>{item.todo}</li>
+      <ul className="ultodo">
+        {this.props.items.map((item, idx) =>
+          <li key={item.id} className="list-item">
+            {item.todo}
+            <button onClick={() => this.props.onClick(idx)} className="list-span"> -</button>
+          </li>
         )}
       </ul>
     );
