@@ -10,6 +10,7 @@ class TodoApp extends React.Component {
       title: ''
     };
 
+    this.ENDPOINT = 'http://localhost:3001/';
     this.onChangeText = this.onChangeText.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
@@ -20,18 +21,22 @@ class TodoApp extends React.Component {
       this.setState({title: e.target.value});
     }
 
-    handleSubmit(e) {
-      e.preventDefault();
-      Axios({
-        method: 'post',
-        url: 'http://localhost:3001/',
+    serverRequest(httpVerb, queryString) {
+      return Axios({
+        method: `${httpVerb}`,
+        url: `${this.ENDPOINT}`,
         headers: {
-          'Content-Type': 'application/graphql'
+          'Content-Type': `application/graphql`
         },
         params: {
-          query: `mutation{ add (title: "${this.state.title}") { id, title } }`
+         query: `${queryString}`
         }
       })
+    }
+
+    handleSubmit(e) {
+      e.preventDefault();
+      this.serverRequest(`post`, `mutation{ add (title: "${this.state.title}") { id, title } }`)
       .then((response) => {
         this.setState((prevState) => ({
           items: prevState.items.concat(response.data.data.add),
@@ -42,16 +47,7 @@ class TodoApp extends React.Component {
     }
 
   handleDelete(itemid, idx) {
-    Axios({
-      method: 'post',
-      url: 'http://localhost:3001/',
-      headers: {
-        'Content-Type': 'application/graphql'
-      },
-      params: {
-        query: `mutation { delete(id: "${itemid}") { id, title } }`
-      }
-    })
+    this.serverRequest(`post`, `mutation { delete(id: "${itemid}") { id, title } }`)
     .then((response) => {
       response.status == 200 
       ? this.setState((prevState) => {
@@ -63,23 +59,14 @@ class TodoApp extends React.Component {
   }
 
   componentDidMount() {
-    Axios({
-      method: 'get',
-      url: 'http://localhost:3001/',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      params: {
-        query: `{todos { id, title }}`
-      }
-    })
-    .then((response) => {
-      const data = Array.from(response.data.data.todos)
-      this.setState((prevState) => ({
-        items: prevState.items.concat(data)
-      }))
-    })
-    .catch(err => console.log(err))
+    this.serverRequest(`get`, `{todos { id, title }}`)
+      .then((response) => {
+        const data = Array.from(response.data.data.todos)
+        this.setState((prevState) => ({
+          items: prevState.items.concat(data)
+        }));
+      })
+      .catch(err => console.log(err));
   }
 
   render() {
