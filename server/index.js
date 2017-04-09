@@ -1,6 +1,6 @@
 const express = require('express');
 const graphqlHTTP = require('express-graphql');
-const { 
+const {
   GraphQLSchema,
   GraphQLObjectType,
   GraphQLID,
@@ -13,7 +13,7 @@ const mongoose = require('mongoose');
 const port = 3001;
 
 /**
- * Create Mongoose schema 
+ * Create Mongoose schema
  */
 const TODO = mongoose.model('Todo', new mongoose.Schema({
   id: mongoose.Schema.Types.ObjectId,
@@ -87,7 +87,7 @@ const MutationDelete = {
   description: 'Delete todo list',
   args: {
     id: {
-      title: 'Id todo list',
+      name: 'Id todo list',
       type: new GraphQLNonNull(GraphQLString)
     }
   },
@@ -113,7 +113,7 @@ const MutationEdit = {
   description: 'Edit todo list',
   args: {
     id: {
-      title: 'id of todo list',
+      name: 'id of todo list',
       type: new GraphQLNonNull(GraphQLString)
     },
     title: {
@@ -168,4 +168,4 @@ app.use('/', graphqlHTTP((req, res) => {
   }
 }));
 app.listen(`${port}`);
-console.log(`Running a GraphQL API server at localhost:${port}/graphql`);
+console.log(`Running a GraphQL API server at localhost:${port}/`);
