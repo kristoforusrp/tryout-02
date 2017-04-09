@@ -1,24 +1,36 @@
-.App {
+ul {
+  -webkit-padding-start: 0;
+}
+.wrapper {
+  overflow: hidden;
   text-align: center;
 }
 
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
+.title {
+  background: #03A9F4;
+  margin: 32px;
+  padding: 32px;
+  color: #f8f8f8;
 }
 
-.App-header {
-  background-color: #222;
-  height: 150px;
-  padding: 20px;
-  color: white;
+.ultodo {
+  display: block;
+  position: relative;
 }
 
-.App-intro {
-  font-size: large;
+.list-item {
+  margin: 32px;
+  display: block;
 }
 
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+.list-span {
+  position: relative;
+  margin: 2px 0 0 24px;
+  padding: 2px 12px;
+  cursor: pointer;
+}
+
+.list-span:hover {
+  color: #f8f8f8;
+  background: #C62828;
 }
