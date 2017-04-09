@@ -41,10 +41,25 @@ class TodoApp extends React.Component {
       .catch(err => console.log(err))
     }
 
-  handleDelete(idx) {
-    this.setState((prevState) => {
-      items: prevState.items.splice(idx, 1)
+  handleDelete(itemid, idx) {
+    Axios({
+      method: 'post',
+      url: 'http://localhost:3001/',
+      headers: {
+        'Content-Type': 'application/graphql'
+      },
+      params: {
+        query: `mutation { delete(id: "${itemid}") { id, title } }`
+      }
     })
+    .then((response) => {
+      response.status == 200 
+      ? this.setState((prevState) => {
+          items: prevState.items.splice(idx, 1)
+        })
+      : console.log('Not Found');
+    })
+    .catch(err => console.log(err))
   }
 
   componentDidMount() {
@@ -91,7 +106,7 @@ class TodoList extends React.Component {
         {this.props.items.map((item, idx) =>
           <li key={item.id} className="list-item">
             {item.title}
-            <button onClick={() => this.props.onClick(idx)} className="list-span"> -</button>
+            <button onClick={() => this.props.onClick(item.id, idx)} className="list-span"> -</button>
           </li>
         )}
       </ul>
