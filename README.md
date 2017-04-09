@@ -24,4 +24,4 @@ Basic Todo app using react and react-native
 - Create react-native todo app
 - Add speech recognition to add, edit, and update todolist
 
-[Kristoforusrp] : https://github.com/kristoforusrp
+[Kristoforusrp]: https://github.com/kristoforusrp
